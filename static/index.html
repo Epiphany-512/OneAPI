@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OneAPI 管理面板</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h1 class="logo">⚡ OneAPI</h1>
+        <span class="version" id="version">v0.1.0</span>
+      </div>
+      <nav class="nav">
+        <a class="nav-item active" data-page="overview" href="#overview">
+          <span class="nav-icon">📊</span> 概览
+        </a>
+        <a class="nav-item" data-page="models" href="#models">
+          <span class="nav-icon">🤖</span> 模型管理
+        </a>
+        <a class="nav-item" data-page="routes" href="#routes">
+          <span class="nav-icon">🔀</span> 路由配置
+        </a>
+        <a class="nav-item" data-page="logs" href="#logs">
+          <span class="nav-icon">📋</span> 请求日志
+        </a>
+        <a class="nav-item" data-page="keys" href="#keys">
+          <span class="nav-icon">🔑</span> API Key
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">连接中...</span>
+      </div>
+    </aside>
+
+    <!-- Mobile header -->
+    <header class="mobile-header">
+      <button class="menu-btn" id="menuBtn">☰</button>
+      <h1>⚡ OneAPI</h1>
+    </header>
+
+    <!-- Main content -->
+    <main class="main" id="mainContent">
+      <!-- Overview Page -->
+      <section class="page active" id="page-overview">
+        <h2 class="page-title">系统概览</h2>
+        <div class="cards" id="overviewCards">
+          <div class="card">
+            <div class="card-icon">⏱️</div>
+            <div class="card-info">
+              <div class="card-value" id="uptime">--</div>
+              <div class="card-label">运行时间</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-icon">🤖</div>
+            <div class="card-info">
+              <div class="card-value" id="modelCount">--</div>
+              <div class="card-label">可用模型</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-icon">🔌</div>
+            <div class="card-info">
+              <div class="card-value" id="providerCount">--</div>
+              <div class="card-label">已注册 Provider</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-icon">📨</div>
+            <div class="card-info">
+              <div class="card-value" id="totalRequests">--</div>
+              <div class="card-label">总请求数</div>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="section-title">Provider 状态</h3>
+        <div class="table-wrap">
+          <table class="data-table" id="providerTable">
+            <thead>
+              <tr><th>名称</th><th>Base URL</th><th>状态</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <h3 class="section-title">使用统计</h3>
+        <div class="stats-grid" id="usageStats">
+          <div class="stat-item">
+            <span class="stat-value" id="successCount">--</span>
+            <span class="stat-label">成功请求</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="errorCount">--</span>
+            <span class="stat-label">失败请求</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="successRate">--</span>
+            <span class="stat-label">成功率</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Models Page -->
+      <section class="page" id="page-models">
+        <h2 class="page-title">模型管理</h2>
+        <div class="toolbar">
+          <input type="text" class="search-input" id="modelSearch" placeholder="搜索模型..." />
+        </div>
+        <div class="table-wrap">
+          <table class="data-table" id="modelTable">
+            <thead>
+              <tr><th>模型 ID</th><th>Provider</th><th>回退链</th><th>状态</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Routes Page -->
+      <section class="page" id="page-routes">
+        <h2 class="page-title">路由配置</h2>
+        <p class="hint">修改模型到 Provider 的映射关系，支持回退链（逗号分隔）。</p>
+        <div class="table-wrap">
+          <table class="data-table" id="routeTable">
+            <thead>
+              <tr><th>模型</th><th>Provider</th><th>回退链</th><th>操作</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="route-add" id="routeAddForm">
+          <h3>添加 / 修改路由</h3>
+          <div class="form-row">
+            <input type="text" id="routeModel" placeholder="模型 ID (如 gpt-4o)" />
+            <input type="text" id="routeProvider" placeholder="Provider (如 openai)" />
+            <input type="text" id="routeFallback" placeholder="回退链 (可选, 逗号分隔)" />
+            <button class="btn btn-primary" id="routeAddBtn">添加</button>
+          </div>
+        </div>
+        <button class="btn btn-success" id="saveRoutesBtn" style="margin-top:1rem">💾 保存所有路由</button>
+      </section>
+
+      <!-- Logs Page -->
+      <section class="page" id="page-logs">
+        <h2 class="page-title">请求日志</h2>
+        <div class="toolbar">
+          <select id="logFilter" class="search-input" style="max-width:160px">
+            <option value="all">全部</option>
+            <option value="success">成功</option>
+            <option value="error">失败</option>
+          </select>
+          <button class="btn btn-secondary" id="refreshLogs">🔄 刷新</button>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table" id="logTable">
+            <thead>
+              <tr><th>时间</th><th>模型</th><th>Provider</th><th>状态</th><th>Tokens</th><th>延迟</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="log-empty" id="logEmpty">暂无请求日志</div>
+      </section>
+
+      <!-- Keys Page -->
+      <section class="page" id="page-keys">
+        <h2 class="page-title">API Key 管理</h2>
+        <div class="toolbar">
+          <input type="text" class="search-input" id="keyName" placeholder="Key 名称" style="max-width:200px" />
+          <button class="btn btn-primary" id="createKeyBtn">➕ 创建 Key</button>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table" id="keyTable">
+            <thead>
+              <tr><th>名称</th><th>Key</th><th>创建时间</th><th>状态</th><th>操作</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="log-empty" id="keyEmpty">暂无 API Key</div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">提示</h3>
+        <button class="modal-close" id="modalClose">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

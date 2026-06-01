@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import pathlib
 import time
 import uuid
 from contextlib import asynccontextmanager
@@ -10,6 +11,8 @@ from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
+from starlette.responses import FileResponse
 
 from .config import get_settings
 from .router import Router
@@ -32,12 +35,20 @@ app = FastAPI(
 )
 
 
+# ── Dashboard routes ────────────────────────────────────────────────────────
+
+from .dashboard import dashboard_router  # noqa: E402
+
+app.include_router(dashboard_router)
+
+
 # ── Auth middleware ─────────────────────────────────────────────────────────
 
 @app.middleware("http")
 async def auth_middleware(request: Request, call_next):
-    # Skip health check
-    if request.url.path in ("/health", "/docs", "/openapi.json", "/redoc"):
+    # Skip health check, docs, and static files
+    if request.url.path in ("/health", "/docs", "/openapi.json", "/redoc") or \
+       request.url.path.startswith("/static"):
         return await call_next(request)
 
     settings = get_settings()
@@ -160,3 +171,17 @@ async def embeddings(request: Request):
 @app.get("/health")
 async def health():
     return {"status": "ok", "version": "0.1.0"}
+
+
+# ── Dashboard static files & page ──────────────────────────────────────────
+
+_static_dir = pathlib.Path(__file__).resolve().parent.parent / "static"
+
+
+@app.get("/dashboard", include_in_schema=False)
+async def dashboard_page():
+    return FileResponse(_static_dir / "index.html")
+
+
+if _static_dir.is_dir():
+    app.mount("/static", StaticFiles(directory=str(_static_dir)), name="static")
