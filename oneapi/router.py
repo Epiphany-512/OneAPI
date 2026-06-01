@@ -28,6 +28,7 @@ class Router:
             "zhipu": (settings.zhipu_api_key, settings.zhipu_base_url),
             "dashscope": (settings.dashscope_api_key, settings.dashscope_base_url),
             "deepseek": (settings.deepseek_api_key, settings.deepseek_base_url),
+            "moonshot": (settings.moonshot_api_key, settings.moonshot_base_url),
         }
         for name, (key, url) in provider_configs.items():
             cls = get_provider(name)

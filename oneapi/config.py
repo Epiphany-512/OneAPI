@@ -31,6 +31,8 @@ class Settings(BaseSettings):
     dashscope_base_url: str = "https://dashscope.aliyuncs.com/compatible-mode/v1"
     deepseek_api_key: str = ""
     deepseek_base_url: str = "https://api.deepseek.com/v1"
+    moonshot_api_key: str = ""
+    moonshot_base_url: str = "https://api.moonshot.cn/v1"
 
     # Routing config file
     oneapi_routes_file: str = ""
@@ -72,6 +74,10 @@ DEFAULT_ROUTES: dict[str, str | list[str]] = {
     # DeepSeek
     "deepseek-chat": "deepseek",
     "deepseek-coder": "deepseek",
+    # Moonshot (Kimi)
+    "moonshot-v1-8k": "moonshot",
+    "moonshot-v1-32k": "moonshot",
+    "moonshot-v1-128k": "moonshot",
     # Fallback aliases
     "smart": ["gpt-4o", "claude-sonnet-4-20250514", "glm-4"],
     "fast": ["deepseek-chat", "gpt-4o-mini", "glm-4-flash"],

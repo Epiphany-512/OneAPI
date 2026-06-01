@@ -4,6 +4,7 @@ from .base import BaseProvider, ChatResult, Choice, Usage, get_provider, list_pr
 from .openai_compat import OpenAIProvider, DashScopeProvider, DeepSeekProvider
 from .anthropic import AnthropicProvider
 from .zhipu import ZhipuProvider
+from .moonshot import MoonshotProvider
 
 __all__ = [
     "BaseProvider",
@@ -17,4 +18,5 @@ __all__ = [
     "DeepSeekProvider",
     "AnthropicProvider",
     "ZhipuProvider",
+    "MoonshotProvider",
 ]

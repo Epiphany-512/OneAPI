@@ -114,6 +114,47 @@ async def list_models():
     return {"object": "list", "data": models}
 
 
+# ── Embeddings ──────────────────────────────────────────────────────────────
+
+@app.post("/v1/embeddings")
+async def embeddings(request: Request):
+    body = await request.json()
+    model = body.get("model", "text-embedding-ada-002")
+    input_texts = body.get("input", [])
+
+    if isinstance(input_texts, str):
+        input_texts = [input_texts]
+
+    if router_instance is None:
+        raise HTTPException(500, "Router not initialized")
+
+    # Route to OpenAI-compatible provider for embeddings
+    from .providers.base import get_provider
+    from .config import get_settings
+
+    settings = get_settings()
+    provider = None
+    route = router_instance._routes.get(model)
+    if route and isinstance(route, str):
+        provider = router_instance._providers.get(route)
+
+    if provider is None and settings.openai_api_key:
+        provider = router_instance._providers.get("openai")
+
+    if provider is None:
+        raise HTTPException(400, f"No provider available for model '{model}'")
+
+    import httpx
+    url = f"{provider.base_url}/embeddings"
+    payload = {"model": model, "input": input_texts}
+
+    async with httpx.AsyncClient(timeout=60) as client:
+        resp = await client.post(url, json=payload, headers=provider._headers())
+        if resp.status_code != 200:
+            raise HTTPException(resp.status_code, resp.text)
+        return JSONResponse(resp.json())
+
+
 # ── Health ──────────────────────────────────────────────────────────────────
 
 @app.get("/health")

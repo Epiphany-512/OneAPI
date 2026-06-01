@@ -1,4 +1,13 @@
-# 🚀 OneAPI - Unified LLM Gateway
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10+-blue.svg" alt="Python">
+  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
+  <img src="https://img.shields.io/badge/Status-Active-brightgreen.svg" alt="Status">
+  <img src="https://img.shields.io/github/stars/Epiphany-512/OneAPI.svg" alt="Stars">
+</p>
+
+<h1 align="center">🚀 OneAPI - Unified LLM Gateway</h1>
+
+<p align="center"><a href="./README_CN.md">中文文档</a></p>
 
 > One API to rule them all. A lightweight, blazing-fast proxy that unifies OpenAI, Claude, GLM, Qwen, DeepSeek and more behind a single OpenAI-compatible interface.
 
@@ -33,7 +42,7 @@ response = client.chat.completions.create(
 ## ✨ Features
 
 - 🔄 **OpenAI-Compatible API** — Drop-in replacement, zero code change
-- 🎯 **Multi-Provider Support** — OpenAI, Claude, GLM, Qwen, DeepSeek, and growing
+- 🎯 **Multi-Provider Support** — OpenAI, Claude, GLM, Qwen, DeepSeek, Moonshot, and growing
 - ⚡ **Streaming Support** — Full SSE streaming, works with OpenAI SDK
 - 🔀 **Load Balancing** — Distribute requests across multiple API keys
 - 🛡️ **Auto Fallback** — If one provider fails, auto-retry with another
@@ -130,7 +139,7 @@ Client (OpenAI SDK)
 - [x] Load balancing & fallback
 - [ ] Web dashboard (usage, costs, logs)
 - [ ] Token budget & rate limiting
-- [ ] Embedding API support
+- [x] Embedding API support
 - [ ] Plugin system for custom providers
 - [ ] Kubernetes Helm chart
 
